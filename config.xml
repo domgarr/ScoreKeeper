@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://yourdomain/KeepScore" version="1.0.0" viewmodes="maximized">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://yourdomain/ScoreKeeper" version="1.0.0" viewmodes="maximized">
     <tizen:application id="32ngNNWC7W.KeepScore" package="32ngNNWC7W" required_version="2.3.1"/>
+    <tizen:service id="32ngNNWC7W.KeepScore" auto-restart="true" on-boot="true">
+      <tizen:content src="js/main.js"/>
+      <tizen:name>ScoreKeeper</tizen:name>
+      <tizen:icon src="ScoreKeeperIcon.png"/>
+      <tizen:description>Scorekeper Application</tizen:description>
+   </tizen:service>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.all"/>
-    <icon src="ScoreKeepIcon.png"/>
-    <name>KeepScore</name>
+    <icon src="ScoreKeeperIcon.png"/>
+    <name>ScoreKeeper</name>
     <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
     <tizen:privilege name="http://tizen.org/privilege/bluetooth"/>
-        <tizen:privilege name="http://tizen.org/privilege/bluetooth.admin"/>
+    <tizen:privilege name="http://tizen.org/privilege/bluetooth.admin"/>
     
     <tizen:profile name="wearable"/>
     <tizen:setting background-support="disable" encryption="disable" hwkey-event="enable"/>
