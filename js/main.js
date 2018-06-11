@@ -23,12 +23,12 @@ window.onload = function () {
 				
 			}
         }
-    });
+     });
     
    
     adapter = tizen.bluetooth.getLEAdapter();
  
-    
+    var court = document.getElementById("court");
     var redScoreHalf = document.getElementById("red_half_court");
     var blueScoreHalf = document.getElementById("blue_half_court");
     var redScoreText = document.getElementById("red_score");
@@ -37,20 +37,23 @@ window.onload = function () {
     var minusRedScoreButton = document.getElementById("minus_red_score_button");
     var minusBlueScoreButton = document.getElementById("minus_blue_score_button");
     var resetButton = document.getElementById("new_game_button");
-    var connButton = document.getElementById("conn_button"); 
+    var swapButton = document.getElementById("swap_button"); 
    
     redScoreHalf.addEventListener("click", function(){
     	redScore++;
     	if(redScore < 0){
     		redScore = 0;
     	}
+    	
+    	render();
     	redScoreArray[0] = redScore;
     	
     	if(remoteDevice !== null && remoteDevice.isConnected){
     	red_score_characteristic.writeValue( redScoreArray, writeSuccess, writeFail);
+    	}else{
+        	connect();
     	}
     	
-    	render();
     });
     
     
@@ -59,13 +62,16 @@ window.onload = function () {
     	if(blueScore < 0){
     		blueScore = 0;
     	}
-    	
+    	render();
     	blueScoreArray[0] = blueScore;
     	
     	if(remoteDevice !== null && remoteDevice.isConnected){
     	blue_score_characteristic.writeValue( blueScoreArray, writeSuccess, writeFail);
+    	}else{
+        	connect();
     	}
-    	render();
+    	
+    
     });
     
   
@@ -80,6 +86,8 @@ window.onload = function () {
     	redScore = 0;
     	blueScore = 0;
     	
+    	render();
+    	
     	blueScoreArray[0] = blueScore;
     	redScoreArray[0] = redScore;
     	
@@ -89,7 +97,10 @@ window.onload = function () {
     		setTimeout(function(){ 		
         		blue_score_characteristic.writeValue( blueScoreArray, writeSuccess, writeFail);
     		}, 500);
+    	}else{
+    		connect();
     	}
+    	
     	render();
     });
     
@@ -99,13 +110,17 @@ window.onload = function () {
     		blueScore = 0;
     	}
     	
+    	render();
+    	
     	blueScoreArray[0] = blueScore;
     	
     	if(remoteDevice !== null && remoteDevice.isConnected){
         	blue_score_characteristic.writeValue( blueScoreArray, writeSuccess, writeFail);
+        	}else{
+        	connect();
         	}
     	
-    	render();
+    	
     	
     });
     
@@ -114,23 +129,32 @@ window.onload = function () {
     	if(redScore < 0){
     		redScore = 0;
     	}
+    	render();
     	
     	redScoreArray[0] = redScore;
     	
       	if(remoteDevice !== null && remoteDevice.isConnected){
         	red_score_characteristic.writeValue( redScoreArray, writeSuccess, writeFail);
-        	}
-    	render();
+        }else{
+        	connect();
+    	}
+      	
+  
     });
 
-    connButton.addEventListener("click",function(){
+    swapButton.addEventListener("click",function(){
+    	court.insertBefore(court.children[1], court.children[0]);
+    });
+    
+    function connect(){
     	console.log("Attempting to connect...");
     	if(remoteDevice === null){
     		adapter.startScan(onDeviceFound);
+    		
     	}else{
     		remoteDevice.connect(connectSuccess, connectFail);    
     	}	
-    });
+    }
     
     function connectFail(error) {
         console.log('Failed to connect to device: ' + error.message);
@@ -149,7 +173,7 @@ window.onload = function () {
 		red_score_characteristic = gattService.characteristics[0];
 		blue_score_characteristic = gattService.characteristics[1];
 		
-		
+		resetButton.classList.add("green");
 		
 		console.log(red_score_characteristic);
 		console.log(blue_score_characteristic);
@@ -163,13 +187,24 @@ window.onload = function () {
 		     
     }
     
+    var watchId;
   
+    var connectionListener = {
+    	    onconnected: function(device) {
+    	    	resetButton.classList.add("green");
+    	    },
+    	    ondisconnected: function(device) {
+    	    	resetButton.classList.remove("green");
+    	    }
+    	};
 
     function onDeviceFound(device) {
         if (remoteDevice === null) {
             remoteDevice = device;
             console.log('Found device ' + device.name + '. Connecting...');
          
+            watchId = remoteDevice.addConnectStateChangeListener(connectionListener);
+            
             device.connect(connectSuccess, connectFail);    
         }
 
@@ -213,11 +248,13 @@ window.onload = function () {
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange, false);
-
+    setTimeout(function(){ 				
+    	connect();
+	}, 2000);
 };
 
 window.onerror = function() {
-    console.log("unload function called.") ;
+    
 	if(adapter !== null){
     	 adapter.stopScan();
      }
@@ -228,6 +265,17 @@ window.onerror = function() {
 	 }
 };
 
+window.onunload = function() {
+    console.log("unload function called.") ;
+	if(adapter !== null){
+    	 adapter.stopScan();
+     }
+     if(remoteDevice !== null){
+    	console.log("remoteDevice cleanup..."); 
+	    remoteDevice.disconnect();
+	    remoteDevice = null;
+	 }
+};
 
 
 

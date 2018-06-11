@@ -70,7 +70,7 @@ https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-ver
 	border-radius: 50%;
 }
 
-#conn_button {
+#swap_button {
 	width: 75px;
 	height: 75px;
 	position: absolute;
@@ -133,7 +133,7 @@ https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-ver
 	left: 35%;
 	transform: translate(-35%, -50%);
 	border-radius: 50%;
-	color: #9999FF;
+	color: blue;
 }
 
 #minus_red_score_button {
@@ -144,7 +144,7 @@ https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-ver
 	left: 65%;
 	transform: translate(-65%, -50%);
 	border-radius: 50%;
-	color: #FF9999;
+	color: red;
 	
 }
 
@@ -174,4 +174,16 @@ https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-ver
 	width: 100%;
 	top: 60%;
 	background: white;
+}
+
+#court {
+	height: 100%;
+}
+
+.green {
+	color: green !important;
+}
+
+.red {
+	color: red;
 }
